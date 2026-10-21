@@ -4,7 +4,7 @@
 
 :root{
   --bg:#EEF1EA; --surface:#F8F9F5; --ink:#15211B; --muted:#4A5A50; --line:#CAD3C5;
-  --moss:#1F3328; --moss-2:#2A4436; --on-moss:#E8EEE5; --on-moss-muted:#B4C3B7;
+  --moss:#173916; --moss-2:#245025; --on-moss:#E8EEE5; --on-moss-muted:#B4C3B7;
   --accent:#D49A1E; --accent-ink:#875A00; --on-accent:#1A1406;
   --ph-a:#2F4A3A; --ph-b:#4A4930; --ph-c:#36414A; --ph-d:#523C2C;
   --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
@@ -15,13 +15,13 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0F1612; --surface:#16211B; --ink:#E5ECE3; --muted:#A5B4A9; --line:#2A3A30;
-  --moss:#0A110D; --moss-2:#15231B; --on-moss:#E5ECE3; --on-moss-muted:#A5B4A9;
+  --moss:#0C1F0C; --moss-2:#173916; --on-moss:#E5ECE3; --on-moss-muted:#A5B4A9;
   --accent:#E3AA3C; --accent-ink:#E9B95C; --on-accent:#1A1406;
   --ph-a:#22372B; --ph-b:#383722; --ph-c:#283039; --ph-d:#3C2C20;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0F1612; --surface:#16211B; --ink:#E5ECE3; --muted:#A5B4A9; --line:#2A3A30;
-  --moss:#0A110D; --moss-2:#15231B; --on-moss:#E5ECE3; --on-moss-muted:#A5B4A9;
+  --moss:#0C1F0C; --moss-2:#173916; --on-moss:#E5ECE3; --on-moss-muted:#A5B4A9;
   --accent:#E3AA3C; --accent-ink:#E9B95C; --on-accent:#1A1406;
   --ph-a:#22372B; --ph-b:#383722; --ph-c:#283039; --ph-d:#3C2C20;
   color-scheme:dark}
@@ -50,7 +50,9 @@ img{display:block;max-width:100%}
 .top.scrolled{box-shadow:0 1px 0 rgba(255,255,255,.06),0 8px 24px rgba(0,0,0,.18)}
 .top .wrap{display:flex;align-items:center;gap:24px;min-height:68px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:1.25rem;letter-spacing:-0.01em}
-.brand svg{color:var(--accent);flex:none}
+.brand img{display:block;height:52px;width:auto}
+.brand-lg img{height:90px}
+.top .wrap{min-height:72px}
 .nav{display:flex;align-items:center;gap:2px;margin-left:auto}
 .nav a{font-family:var(--display);font-weight:500;font-size:.95rem;text-decoration:none;padding:10px 11px;border-radius:var(--radius);color:var(--on-moss-muted);transition:color .15s,background .15s}
 .nav a:hover,.nav a[aria-current="page"]{color:var(--on-moss);background:var(--moss-2)}
