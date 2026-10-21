@@ -26,6 +26,7 @@
   --ph-a:#22372B; --ph-b:#383722; --ph-c:#283039; --ph-d:#3C2C20;
   color-scheme:dark}
 
+[hidden]{display:none!important}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:84px}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
