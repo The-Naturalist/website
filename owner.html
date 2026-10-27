@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Owner · The Naturalist</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#173916">
+<link rel="icon" href="assets/img/favicon-64.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="owner">
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="The Naturalist, home"><img src="assets/img/logo-horizontal.png" alt="The Naturalist" width="208" height="48"></a>
+    <div class="ow-who" id="who" hidden><span id="whoEmail"></span><button class="copy" id="signOut" type="button">Sign out</button></div>
+  </div>
+</header>
+<main id="main">
+
+<section class="ow-gate" id="gate">
+  <div class="wrap">
+    <div class="ow-card">
+      <span class="tag">Owner only</span>
+      <h1>Owner area</h1>
+      <p id="gateMsg">Sign in with the business Google account to see bookings and write field notes.</p>
+      <button class="btn btn-accent" id="signIn" type="button" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.35 11.1H12v2.98h5.35c-.23 1.43-1.66 4.2-5.35 4.2-3.22 0-5.85-2.67-5.85-5.96S8.78 6.36 12 6.36c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.68 3.82 14.55 2.9 12 2.9 6.98 2.9 2.9 6.98 2.9 12s4.08 9.1 9.1 9.1c5.25 0 8.73-3.69 8.73-8.89 0-.6-.07-1.05-.15-1.51Z"/></svg>
+        Sign in with Google
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="ow-app" id="app" hidden>
+  <div class="wrap">
+    <div class="ow-tabs" role="tablist" aria-label="Owner area">
+      <button class="ow-tab" type="button" role="tab" id="tabBookings" aria-controls="bookingsPane" aria-selected="true">Bookings</button>
+      <button class="ow-tab" type="button" role="tab" id="tabNotes" aria-controls="notesPane" aria-selected="false">Field notes</button>
+    </div>
+    <div id="bookingsPane" role="tabpanel" aria-labelledby="tabBookings">
+    <div class="ow-head">
+      <div>
+        <span class="tag">Owner dashboard</span>
+        <h1>Bookings</h1>
+      </div>
+      <dl class="ow-stats">
+        <div><dt class="tag">New requests</dt><dd id="stNew">0</dd></div>
+        <div><dt class="tag">Confirmed, upcoming</dt><dd id="stConf">0</dd></div>
+        <div><dt class="tag">Guests, next 30 days</dt><dd id="stGuests">0</dd></div>
+      </dl>
+    </div>
+
+    <div class="ow-bar">
+      <div class="filters ow-views" role="group" aria-label="View">
+        <button class="chip" type="button" data-view="cal" aria-pressed="true">Calendar</button>
+        <button class="chip" type="button" data-view="list" aria-pressed="false">List</button>
+      </div>
+      <div class="filters" role="group" aria-label="Status">
+        <button class="chip" type="button" data-status="all" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-status="new" aria-pressed="false">New</button>
+        <button class="chip" type="button" data-status="confirmed" aria-pressed="false">Confirmed</button>
+        <button class="chip" type="button" data-status="declined" aria-pressed="false">Declined</button>
+        <button class="chip" type="button" data-status="done" aria-pressed="false">Done</button>
+      </div>
+    </div>
+
+    <div id="calView">
+      <div class="cal-nav">
+        <button class="lb-btn" id="calPrev" type="button" aria-label="Previous month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <h2 id="calTitle" aria-live="polite"></h2>
+        <button class="lb-btn" id="calNext" type="button" aria-label="Next month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+        <button class="btn btn-line" id="calToday" type="button">Today</button>
+      </div>
+      <div class="cal" id="cal" role="grid" aria-labelledby="calTitle"></div>
+      <div class="cal-day" id="calDay"></div>
+    </div>
+
+    <div id="listView" hidden>
+      <div class="ow-search">
+        <input id="q" type="search" placeholder="Search name, email, country" aria-label="Search bookings">
+        <label class="ow-check"><input id="showPast" type="checkbox"> Show past trips</label>
+      </div>
+      <div class="ow-list" id="list"></div>
+    </div>
+    </div>
+
+    <div id="notesPane" role="tabpanel" aria-labelledby="tabNotes" hidden>
+      <div id="fnListView">
+        <div class="ow-head">
+          <div>
+            <span class="tag">Owner dashboard</span>
+            <h1>Field notes</h1>
+          </div>
+          <button class="btn btn-accent" id="fnNew" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Write a field note
+          </button>
+        </div>
+        <div class="ow-list" id="fnList"></div>
+      </div>
+
+      <form class="bk-form fn-form" id="fnForm" novalidate hidden>
+        <div class="fn-form-head">
+          <button class="btn btn-line" id="fnBack" type="button">← All field notes</button>
+          <span class="tag ow-pill" id="fnState"></span>
+        </div>
+        <fieldset>
+          <legend class="tag">Photo</legend>
+          <div class="field full">
+            <label class="fn-drop" for="fnPhoto" id="fnDrop">
+              <img id="fnPreview" alt="" hidden>
+              <span class="fn-drop-msg" id="fnDropMsg">Choose a photo<small>JPG or PNG. Large photos are resized automatically.</small></span>
+            </label>
+            <input id="fnPhoto" type="file" accept="image/*" class="fn-file">
+            <button class="btn btn-line fn-change" id="fnChange" type="button" hidden>Change photo</button>
+          </div>
+          <div class="field full">
+            <label for="fnAlt">Describe the photo <span class="opt">for screen readers</span></label>
+            <input id="fnAlt" maxlength="200" placeholder="A Vedda elder in traditional attire">
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="tag">Article</legend>
+          <div class="field full">
+            <label for="fnTitle">Title</label>
+            <input id="fnTitle" maxlength="160" required placeholder="The Vedda, Sri Lanka's original forest dwellers">
+          </div>
+          <div class="field full">
+            <label for="fnBody">Article</label>
+            <textarea id="fnBody" rows="12" maxlength="20000" required placeholder="Write the note here. Leave an empty line between paragraphs."></textarea>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="tag">Details</legend>
+          <div class="field">
+            <label for="fnCat">Kind of note <span class="opt">optional</span></label>
+            <input id="fnCat" maxlength="40" list="fnCats" placeholder="People">
+            <datalist id="fnCats"><option value="People"><option value="Wildlife"><option value="Birds"><option value="Reptiles"><option value="Crafts"><option value="Places"><option value="Trip report"></datalist>
+          </div>
+          <div class="field">
+            <label for="fnTopic">Topic <span class="opt">optional</span></label>
+            <input id="fnTopic" maxlength="80" placeholder="Indigenous heritage">
+          </div>
+          <div class="field">
+            <label for="fnAuthor">Written by</label>
+            <input id="fnAuthor" maxlength="80" value="Priyanwada Rathnayake">
+          </div>
+          <div class="field">
+            <label for="fnTour">See it on <span class="opt">optional</span></label>
+            <select id="fnTour"><option value="">No tour link</option></select>
+          </div>
+          <div class="field full">
+            <label for="fnTags">Tags <span class="opt">separate with commas</span></label>
+            <input id="fnTags" maxlength="300" placeholder="Culture, Indigenous, Heritage">
+          </div>
+        </fieldset>
+        <p class="bk-error" id="fnErr" role="alert" hidden></p>
+        <div class="ow-actions fn-actions">
+          <button class="btn btn-accent" id="fnPublish" type="submit">Publish</button>
+          <button class="btn btn-line" id="fnDraft" type="button">Save as draft</button>
+          <a class="btn btn-line" id="fnView" href="field-notes.html" target="_blank" rel="noopener" hidden>View on site</a>
+          <button class="ow-del" id="fnDelete" type="button" hidden>Delete note</button>
+        </div>
+        <p class="bk-note" id="fnSaved" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<dialog class="ow-dlg" id="dlg" aria-labelledby="dTitle">
+  <form method="dialog" class="ow-dlg-x"><button class="lb-btn" type="submit" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></form>
+  <span class="tag" id="dStatus"></span>
+  <h2 id="dTitle"></h2>
+  <p class="ow-dates" id="dDates"></p>
+  <dl class="ow-fields" id="dFields"></dl>
+  <div class="ow-replies" id="dReplies"></div>
+  <label class="ow-note-l" for="dNote">Private note</label>
+  <textarea id="dNote" rows="3" maxlength="3000" placeholder="Only you can see this"></textarea>
+  <div class="ow-actions">
+    <button class="btn btn-accent" type="button" data-set="confirmed">Confirm</button>
+    <button class="btn btn-line" type="button" data-set="declined">Decline</button>
+    <button class="btn btn-line" type="button" data-set="done">Mark done</button>
+    <button class="btn btn-line" type="button" data-set="new">Back to new</button>
+    <button class="btn btn-line" type="button" id="dSave">Save note</button>
+    <button class="ow-del" type="button" id="dDelete">Delete booking</button>
+  </div>
+  <p class="bk-error" id="dErr" role="alert" hidden></p>
+</dialog>
+
+<script type="module" src="assets/js/owner.js"></script>
+</body>
+</html>
