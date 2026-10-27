@@ -9,6 +9,8 @@ var daysIn = document.getElementById("bkDays");
 var errBox = document.getElementById("bkError");
 var submit = document.getElementById("bkSubmit");
 var WA = "https://wa.me/94712727755";
+// The contact page form always goes to WhatsApp, even once Firebase is set up.
+var waOnly = form.dataset.send === "whatsapp";
 
 var pad = function (n) { return String(n).padStart(2, "0"); };
 var ymd = function (d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
@@ -99,7 +101,7 @@ form.addEventListener("submit", async function (e) {
   }
   if (form.website.value) return; // bot filled the hidden field
   var b = read();
-  if (!isConfigured) {
+  if (!isConfigured || waOnly) {
     var url = waText(b);
     var w = window.open(url, "_blank");
     if (w) w.opener = null; else location.href = url;
