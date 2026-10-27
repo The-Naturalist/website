@@ -1,4 +1,5 @@
-// Public booking form (book.html). Saves a request to Firestore for the owner to review.
+// Public booking form (book.html). Saves a request to Firestore for the owner to review,
+// or, until Firebase is configured, hands the full request to WhatsApp.
 import { TOURS, isConfigured } from "./firebase-config.js";
 
 var form = document.getElementById("bookForm");
@@ -39,10 +40,23 @@ tourSel.addEventListener("change", syncDays);
 syncDays();
 
 var waText = function (b) {
-  return WA + "?text=" + encodeURIComponent(
-    "Hello, I'd like to book " + b.tourLabel + " starting " + b.date + " for " + b.guests + " guest" + (b.guests > 1 ? "s" : "") + ". My name is " + b.name + "."
-  );
+  var lines = [
+    "Hello, I'd like to book a tour.",
+    "",
+    "Tour: " + b.tourLabel,
+    "Start date: " + pretty(b.date),
+    "Days: " + b.days,
+    "Guests: " + b.guests,
+    "",
+    "Name: " + b.name,
+    "Email: " + b.email
+  ];
+  if (b.phone) lines.push("Phone: " + b.phone);
+  if (b.country) lines.push("Country: " + b.country);
+  if (b.message) lines.push("", "Notes: " + b.message);
+  return WA + "?text=" + encodeURIComponent(lines.join("\n"));
 };
+
 
 var showError = function (msg, booking) {
   errBox.innerHTML = "";
@@ -85,7 +99,13 @@ form.addEventListener("submit", async function (e) {
   }
   if (form.website.value) return; // bot filled the hidden field
   var b = read();
-  if (!isConfigured) { showError("Online booking isn't switched on yet.", b); return; }
+  if (!isConfigured) {
+    var url = waText(b);
+    var w = window.open(url, "_blank");
+    if (w) w.opener = null; else location.href = url;
+    showDone(b, true);
+    return;
+  }
 
   submit.disabled = true; submit.textContent = "Sending…";
   try {
@@ -100,13 +120,22 @@ form.addEventListener("submit", async function (e) {
     submit.disabled = false; submit.textContent = "Send booking request";
     return;
   }
+  showDone(b, false);
+});
+
+function showDone(b, viaWa) {
   document.getElementById("bkDoneName").textContent = b.name.split(" ")[0];
   document.getElementById("bkDoneTour").textContent = b.tourLabel;
   document.getElementById("bkDoneDate").textContent = pretty(b.date);
   document.getElementById("bkDoneWa").hidden = !b.phone;
-  document.getElementById("bkDoneWaLink").href = waText(b);
+  var link = document.getElementById("bkDoneWaLink");
+  link.href = waText(b);
+  if (viaWa) {
+    document.getElementById("bkDoneLede").textContent = "WhatsApp should now be open with your request for " + b.tourLabel + " starting " + pretty(b.date) + ". Press send there and Priyanwada will reply to confirm.";
+    link.textContent = "Open WhatsApp again";
+  }
   form.hidden = true;
   var done = document.getElementById("bkDone");
   done.hidden = false; done.focus();
   window.scrollTo({ top: done.getBoundingClientRect().top + scrollY - 100 });
-});
+}
