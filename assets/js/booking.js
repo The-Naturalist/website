@@ -1,6 +1,6 @@
 // Booking forms (book.html, contact.html). book.html saves to Firestore for the owner,
 // or hands the request to WhatsApp until Firebase is configured. The contact page form
-// (data-send="email") emails the request straight to the business through FormSubmit.
+// (data-send="email") emails the request straight to the business through Web3Forms.
 import { TOURS, isConfigured } from "./firebase-config.js";
 
 var form = document.getElementById("bookForm");
@@ -11,8 +11,8 @@ var errBox = document.getElementById("bkError");
 var submit = document.getElementById("bkSubmit");
 var WA = "https://wa.me/94712727755";
 var EMAIL = "thenaturalist.lk@gmail.com";
-// FormSubmit alias for EMAIL (from its activation email), so the address isn't in the request URL.
-var FORM_ID = "441605248391566a3d622373ee58d7d7";
+// Web3Forms access key for EMAIL (safe to publish; it can only send to that inbox).
+var W3F_KEY = "fc351e91-b0ce-4233-acfa-88f6678c25bc";
 var byEmail = form.dataset.send === "email";
 
 var pad = function (n) { return String(n).padStart(2, "0"); };
@@ -110,15 +110,15 @@ form.addEventListener("submit", async function (e) {
       // Never leave the visitor on "Sending…": give up after 20 seconds.
       var ctl = new AbortController();
       var timer = setTimeout(function () { ctl.abort(); }, 20000);
-      var res = await fetch("https://formsubmit.co/ajax/" + FORM_ID, {
+      var res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         signal: ctl.signal,
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: "Booking request: " + b.tourLabel + " from " + pretty(b.date) + " (" + b.name + ")",
-          _replyto: b.email,
-          _template: "table",
-          _captcha: "false",
+          access_key: W3F_KEY,
+          subject: "Booking request: " + b.tourLabel + " from " + pretty(b.date) + " (" + b.name + ")",
+          from_name: "The Naturalist website",
+          replyto: b.email,
           Tour: b.tourLabel,
           "Start date": pretty(b.date),
           Days: b.days,
@@ -136,15 +136,10 @@ form.addEventListener("submit", async function (e) {
     } catch (err) {
       clearTimeout(timer);
       console.error("Booking email failed:", err);
-      var why = String((err && err.message) || "");
       errBox.innerHTML = "";
       var m = document.createElement("a");
       m.href = "mailto:" + EMAIL; m.textContent = EMAIL;
-      if (/activat/i.test(why)) {
-        errBox.append("This form is waiting to be switched on. Please email us at ", m, " for now.");
-      } else {
-        errBox.append("Sorry, the request didn't go through. Please try again, or email us at ", m, ".");
-      }
+      errBox.append("Sorry, the request didn't go through. Please try again, or email us at ", m, ".");
       errBox.hidden = false;
       submit.disabled = false; submit.textContent = "Send booking request";
       return;
