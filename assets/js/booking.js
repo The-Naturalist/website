@@ -11,6 +11,8 @@ var errBox = document.getElementById("bkError");
 var submit = document.getElementById("bkSubmit");
 var WA = "https://wa.me/94712727755";
 var EMAIL = "thenaturalist.lk@gmail.com";
+// FormSubmit alias for EMAIL (from its activation email), so the address isn't in the request URL.
+var FORM_ID = "441605248391566a3d622373ee58d7d7";
 var byEmail = form.dataset.send === "email";
 
 var pad = function (n) { return String(n).padStart(2, "0"); };
@@ -105,8 +107,12 @@ form.addEventListener("submit", async function (e) {
   if (byEmail) {
     submit.disabled = true; submit.textContent = "Sending…";
     try {
-      var res = await fetch("https://formsubmit.co/ajax/" + EMAIL, {
+      // Never leave the visitor on "Sending…": give up after 20 seconds.
+      var ctl = new AbortController();
+      var timer = setTimeout(function () { ctl.abort(); }, 20000);
+      var res = await fetch("https://formsubmit.co/ajax/" + FORM_ID, {
         method: "POST",
+        signal: ctl.signal,
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           _subject: "Booking request: " + b.tourLabel + " from " + pretty(b.date) + " (" + b.name + ")",
@@ -124,14 +130,21 @@ form.addEventListener("submit", async function (e) {
           Notes: b.message || ""
         })
       });
+      clearTimeout(timer);
       var out = await res.json().catch(function () { return {}; });
-      if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
+      if (!res.ok || String(out.success) !== "true") throw new Error(out.message || "HTTP " + res.status);
     } catch (err) {
-      console.error(err);
+      clearTimeout(timer);
+      console.error("Booking email failed:", err);
+      var why = String((err && err.message) || "");
       errBox.innerHTML = "";
       var m = document.createElement("a");
       m.href = "mailto:" + EMAIL; m.textContent = EMAIL;
-      errBox.append("Sorry, the request didn't go through. Please try again, or email us at ", m, ".");
+      if (/activat/i.test(why)) {
+        errBox.append("This form is waiting to be switched on. Please email us at ", m, " for now.");
+      } else {
+        errBox.append("Sorry, the request didn't go through. Please try again, or email us at ", m, ".");
+      }
       errBox.hidden = false;
       submit.disabled = false; submit.textContent = "Send booking request";
       return;
