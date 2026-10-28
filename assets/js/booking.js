@@ -1,5 +1,6 @@
-// Public booking form (book.html). Saves a request to Firestore for the owner to review,
-// or, until Firebase is configured, hands the full request to WhatsApp.
+// Booking forms (book.html, contact.html). book.html saves to Firestore for the owner,
+// or hands the request to WhatsApp until Firebase is configured. The contact page form
+// (data-send="email") emails the request straight to the business through FormSubmit.
 import { TOURS, isConfigured } from "./firebase-config.js";
 
 var form = document.getElementById("bookForm");
@@ -9,8 +10,8 @@ var daysIn = document.getElementById("bkDays");
 var errBox = document.getElementById("bkError");
 var submit = document.getElementById("bkSubmit");
 var WA = "https://wa.me/94712727755";
-// The contact page form always goes to WhatsApp, even once Firebase is set up.
-var waOnly = form.dataset.send === "whatsapp";
+var EMAIL = "thenaturalist.lk@gmail.com";
+var byEmail = form.dataset.send === "email";
 
 var pad = function (n) { return String(n).padStart(2, "0"); };
 var ymd = function (d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
@@ -101,11 +102,48 @@ form.addEventListener("submit", async function (e) {
   }
   if (form.website.value) return; // bot filled the hidden field
   var b = read();
-  if (!isConfigured || waOnly) {
+  if (byEmail) {
+    submit.disabled = true; submit.textContent = "Sending…";
+    try {
+      var res = await fetch("https://formsubmit.co/ajax/" + EMAIL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: "Booking request: " + b.tourLabel + " from " + pretty(b.date) + " (" + b.name + ")",
+          _replyto: b.email,
+          _template: "table",
+          _captcha: "false",
+          Tour: b.tourLabel,
+          "Start date": pretty(b.date),
+          Days: b.days,
+          Guests: b.guests,
+          Name: b.name,
+          Email: b.email,
+          Phone: b.phone || "",
+          Country: b.country || "",
+          Notes: b.message || ""
+        })
+      });
+      var out = await res.json().catch(function () { return {}; });
+      if (!res.ok || String(out.success) !== "true") throw new Error(out.message || res.status);
+    } catch (err) {
+      console.error(err);
+      errBox.innerHTML = "";
+      var m = document.createElement("a");
+      m.href = "mailto:" + EMAIL; m.textContent = EMAIL;
+      errBox.append("Sorry, the request didn't go through. Please try again, or email us at ", m, ".");
+      errBox.hidden = false;
+      submit.disabled = false; submit.textContent = "Send booking request";
+      return;
+    }
+    showDone(b, "email");
+    return;
+  }
+  if (!isConfigured) {
     var url = waText(b);
     var w = window.open(url, "_blank");
     if (w) w.opener = null; else location.href = url;
-    showDone(b, true);
+    showDone(b, "whatsapp");
     return;
   }
 
@@ -122,17 +160,20 @@ form.addEventListener("submit", async function (e) {
     submit.disabled = false; submit.textContent = "Send booking request";
     return;
   }
-  showDone(b, false);
+  showDone(b, "saved");
 });
 
-function showDone(b, viaWa) {
+function showDone(b, how) {
   document.getElementById("bkDoneName").textContent = b.name.split(" ")[0];
   document.getElementById("bkDoneTour").textContent = b.tourLabel;
   document.getElementById("bkDoneDate").textContent = pretty(b.date);
   document.getElementById("bkDoneWa").hidden = !b.phone;
   var link = document.getElementById("bkDoneWaLink");
   link.href = waText(b);
-  if (viaWa) {
+  if (how === "email") {
+    document.getElementById("bkDoneLede").textContent = "Your request for " + b.tourLabel + " starting " + pretty(b.date) + " has been sent. Priyanwada will reply to " + b.email + ", usually within 24 hours.";
+    link.hidden = true;
+  } else if (how === "whatsapp") {
     document.getElementById("bkDoneLede").textContent = "WhatsApp should now be open with your request for " + b.tourLabel + " starting " + pretty(b.date) + ". Press send there and Priyanwada will reply to confirm.";
     link.textContent = "Open WhatsApp again";
   }
