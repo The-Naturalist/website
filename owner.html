@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/news.css">
 </head>
 <body class="owner">
 <header class="top" id="top">
@@ -26,7 +27,7 @@
     <div class="ow-card">
       <span class="tag">Owner only</span>
       <h1>Owner area</h1>
-      <p id="gateMsg">Sign in with the business Google account to see bookings and write field notes.</p>
+      <p id="gateMsg">Sign in with the business Google account to see bookings and post field notes and news.</p>
       <button class="btn btn-accent" id="signIn" type="button" disabled>
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.35 11.1H12v2.98h5.35c-.23 1.43-1.66 4.2-5.35 4.2-3.22 0-5.85-2.67-5.85-5.96S8.78 6.36 12 6.36c1.83 0 3.06.78 3.76 1.45l2.56-2.47C16.68 3.82 14.55 2.9 12 2.9 6.98 2.9 2.9 6.98 2.9 12s4.08 9.1 9.1 9.1c5.25 0 8.73-3.69 8.73-8.89 0-.6-.07-1.05-.15-1.51Z"/></svg>
         Sign in with Google
@@ -40,6 +41,7 @@
     <div class="ow-tabs" role="tablist" aria-label="Owner area">
       <button class="ow-tab" type="button" role="tab" id="tabBookings" aria-controls="bookingsPane" aria-selected="true">Bookings</button>
       <button class="ow-tab" type="button" role="tab" id="tabNotes" aria-controls="notesPane" aria-selected="false">Field notes</button>
+      <button class="ow-tab" type="button" role="tab" id="tabNews" aria-controls="newsPane" aria-selected="false">News &amp; events</button>
     </div>
     <div id="bookingsPane" role="tabpanel" aria-labelledby="tabBookings">
     <div class="ow-head">
@@ -166,6 +168,101 @@
           <button class="ow-del" id="fnDelete" type="button" hidden>Delete note</button>
         </div>
         <p class="bk-note" id="fnSaved" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div id="newsPane" role="tabpanel" aria-labelledby="tabNews" hidden>
+      <div id="nwListView">
+        <div class="ow-head">
+          <div>
+            <span class="tag">Owner dashboard</span>
+            <h1>News &amp; events</h1>
+          </div>
+          <button class="btn btn-accent" id="nwNew" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Write a news post
+          </button>
+        </div>
+        <div class="ow-list" id="nwOwnList"></div>
+      </div>
+
+      <form class="bk-form fn-form" id="nwForm" novalidate hidden>
+        <div class="fn-form-head">
+          <button class="btn btn-line" id="nwBack" type="button">← All news posts</button>
+          <span class="tag ow-pill" id="nwState"></span>
+        </div>
+        <fieldset>
+          <legend class="tag">What is it?</legend>
+          <div class="field full">
+            <div class="filters nw-types" role="radiogroup" aria-label="Kind of post">
+              <label class="chip"><input type="radio" name="nwType" value="event" checked> Event</label>
+              <label class="chip"><input type="radio" name="nwType" value="special"> Tour special</label>
+              <label class="chip"><input type="radio" name="nwType" value="news"> News</label>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="tag">Cover photo</legend>
+          <div class="field full">
+            <label class="fn-drop" for="nwPhoto" id="nwDrop">
+              <img id="nwPreview" alt="" hidden>
+              <span class="fn-drop-msg" id="nwDropMsg">Choose a cover photo<small>Shown on the card and at the top of the post.</small></span>
+            </label>
+            <input id="nwPhoto" type="file" accept="image/*" class="fn-file">
+            <button class="btn btn-line fn-change" id="nwChange" type="button" hidden>Change photo</button>
+          </div>
+          <div class="field full">
+            <label for="nwAlt">Describe the photo <span class="opt">for screen readers</span></label>
+            <input id="nwAlt" maxlength="200" placeholder="Speakers on stage at the snake conference">
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="tag">The post</legend>
+          <div class="field full">
+            <label for="nwTitle">Title</label>
+            <input id="nwTitle" maxlength="160" required placeholder="We took part in the Sri Lanka snake conference">
+          </div>
+          <div class="field full">
+            <label for="nwBody">Write-up</label>
+            <textarea id="nwBody" rows="10" maxlength="20000" required placeholder="The first paragraph is also shown on the card. Leave an empty line between paragraphs."></textarea>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="tag">Details</legend>
+          <div class="field">
+            <label for="nwDate">Date <span class="opt">optional</span></label>
+            <input id="nwDate" type="date">
+          </div>
+          <div class="field">
+            <label for="nwDateEnd">Until <span class="opt">optional</span></label>
+            <input id="nwDateEnd" type="date">
+          </div>
+          <div class="field">
+            <label for="nwPlace">Where <span class="opt">optional</span></label>
+            <input id="nwPlace" maxlength="120" placeholder="Colombo, Sri Lanka">
+          </div>
+          <div class="field">
+            <label for="nwTour">See it on <span class="opt">optional</span></label>
+            <select id="nwTour"><option value="">No tour link</option></select>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="tag">Photo album <span class="opt" id="nwCount"></span></legend>
+          <div class="field full">
+            <div class="nw-album" id="nwAlbum"></div>
+            <input id="nwPhotos" type="file" accept="image/*" multiple class="fn-file">
+            <label class="btn btn-line fn-change" for="nwPhotos" id="nwAdd">+ Add photos</label>
+            <p class="bk-note">Pick several at once. Add a caption under each if you like. Use the arrows to change the order.</p>
+          </div>
+        </fieldset>
+        <p class="bk-error" id="nwErr" role="alert" hidden></p>
+        <div class="ow-actions fn-actions">
+          <button class="btn btn-accent" id="nwPublish" type="submit">Publish</button>
+          <button class="btn btn-line" id="nwDraft" type="button">Save as draft</button>
+          <a class="btn btn-line" id="nwView" href="news.html" target="_blank" rel="noopener" hidden>View on site</a>
+          <button class="ow-del" id="nwDelete" type="button" hidden>Delete post</button>
+        </div>
+        <p class="bk-note" id="nwSaved" aria-live="polite"></p>
       </form>
     </div>
   </div>

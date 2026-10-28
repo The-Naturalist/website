@@ -1,6 +1,6 @@
 rules_version = '2';
 // Bookings: anyone can send a booking request; only the owner can see or change them.
-// Field notes: anyone can read published notes; only the owner can write them.
+// Field notes and news: anyone can read published posts; only the owner can write them.
 // Paste this into Firebase console > Firestore Database > Rules, then Publish.
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -65,6 +65,47 @@ service cloud.firestore {
       allow create: if isOwner() && validNote(request.resource.data) && request.resource.data.createdAt == request.time;
       allow update: if isOwner() && validNote(request.resource.data) && request.resource.data.createdAt == resource.data.createdAt;
       allow delete: if isOwner();
+    }
+
+    function validNews(d) {
+      return d.keys().hasOnly(['type', 'title', 'body', 'date', 'dateEnd', 'place', 'tour', 'image', 'imageAlt', 'photoCount', 'published', 'publishedAt', 'createdAt', 'updatedAt'])
+        && d.keys().hasAll(['type', 'title', 'body', 'image', 'published', 'createdAt', 'updatedAt'])
+        && d.type in ['event', 'special', 'news']
+        && str(d.title, 0, 160)
+        && str(d.body, 0, 20000)
+        && (!('date' in d) || (d.date is string && d.date.matches('^([0-9]{4}-[0-9]{2}-[0-9]{2})?$')))
+        && (!('dateEnd' in d) || (d.dateEnd is string && d.dateEnd.matches('^([0-9]{4}-[0-9]{2}-[0-9]{2})?$')))
+        && (!('place' in d) || str(d.place, 0, 120))
+        && (!('tour' in d) || str(d.tour, 0, 40))
+        && str(d.image, 0, 750000)
+        && (!('imageAlt' in d) || str(d.imageAlt, 0, 200))
+        && (!('photoCount' in d) || (d.photoCount is int && d.photoCount >= 0 && d.photoCount <= 40))
+        && d.published is bool
+        && (!d.published || (d.title.size() > 0 && d.body.size() > 0 && d.image.size() > 0))
+        && (!('publishedAt' in d) || d.publishedAt == null || d.publishedAt is timestamp)
+        && d.createdAt is timestamp
+        && d.updatedAt == request.time;
+    }
+
+    function validPhoto(d) {
+      return d.keys().hasOnly(['image', 'caption', 'order'])
+        && str(d.image, 1, 750000)
+        && (!('caption' in d) || str(d.caption, 0, 200))
+        && d.order is int && d.order >= 0 && d.order < 100;
+    }
+
+    match /news/{id} {
+      allow read: if resource.data.published == true || isOwner();
+      allow create: if isOwner() && validNews(request.resource.data) && request.resource.data.createdAt == request.time;
+      allow update: if isOwner() && validNews(request.resource.data) && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isOwner();
+
+      // Album photos: visible once their post is published.
+      match /photos/{photo} {
+        allow read: if isOwner() || get(/databases/$(database)/documents/news/$(id)).data.published == true;
+        allow create, update: if isOwner() && validPhoto(request.resource.data);
+        allow delete: if isOwner();
+      }
     }
   }
 }

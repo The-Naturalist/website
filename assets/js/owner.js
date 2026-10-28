@@ -1,4 +1,4 @@
-// Owner dashboard (owner.html): Google sign-in, live bookings list and calendar, field notes tab.
+// Owner dashboard (owner.html): Google sign-in, live bookings list and calendar, field notes and news tabs.
 // Privacy is enforced by firestore.rules; the email check here only picks which screen to show.
 import { OWNER_EMAILS, isConfigured } from "./firebase-config.js";
 
@@ -20,7 +20,7 @@ async function start() {
   var STATUS = { new: "New request", confirmed: "Confirmed", declined: "Declined", done: "Done" };
   var bookings = [], unsub = null;
   var view = "cal", status = "all", month = firstOfMonth(new Date()), selDay = null, current = null;
-  var notes = null;
+  var notes = null, news = null;
 
   signInBtn.disabled = false;
   signInBtn.addEventListener("click", function () {
@@ -39,10 +39,12 @@ async function start() {
     $("gate").hidden = !!ok;
     $("app").hidden = !ok;
     if (user && !ok) gateMsg.textContent = user.email + " doesn't have access to the owner area. Sign out and use the business account.";
-    if (!user) gateMsg.textContent = "Sign in with the business Google account to see bookings and write field notes.";
+    if (!user) gateMsg.textContent = "Sign in with the business Google account to see bookings and post field notes and news.";
     if (notes) { notes.stop(); notes = null; }
+    if (news) { news.stop(); news = null; }
     if (!ok) { bookings = []; return; }
     import("./owner-notes.js").then(function (m) { if (auth.currentUser === user && !notes) notes = m.startNotes(db, F); });
+    import("./owner-news.js").then(function (m) { if (auth.currentUser === user && !news) news = m.startNews(db, F); });
     var q = F.query(F.collection(db, "bookings"), F.orderBy("date"));
     unsub = F.onSnapshot(q, function (snap) {
       bookings = snap.docs.map(function (d) { var b = d.data(); b.id = d.id; return b; });
@@ -229,16 +231,17 @@ async function start() {
   $("calNext").addEventListener("click", function () { month = new Date(month.getFullYear(), month.getMonth() + 1, 1); render(); });
   $("calToday").addEventListener("click", function () { month = firstOfMonth(new Date()); selDay = ymd(new Date()); render(); });
   $("q").addEventListener("input", render);
-  ["tabBookings", "tabNotes"].forEach(function (id) {
+  var TABS = { tabBookings: "", tabNotes: "#notes", tabNews: "#news" };
+  Object.keys(TABS).forEach(function (id) {
     $(id).addEventListener("click", function () { showTab(id); });
   });
   function showTab(id) {
-    ["tabBookings", "tabNotes"].forEach(function (t) {
+    Object.keys(TABS).forEach(function (t) {
       $(t).setAttribute("aria-selected", t === id);
       $($(t).getAttribute("aria-controls")).hidden = t !== id;
     });
-    history.replaceState(null, "", id === "tabNotes" ? "#notes" : location.pathname + location.search);
+    history.replaceState(null, "", TABS[id] || location.pathname + location.search);
   }
-  if (location.hash === "#notes") showTab("tabNotes");
+  Object.keys(TABS).forEach(function (t) { if (TABS[t] && location.hash === TABS[t]) showTab(t); });
   $("showPast").addEventListener("change", render);
 }

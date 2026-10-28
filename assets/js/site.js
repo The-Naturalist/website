@@ -51,10 +51,11 @@
     });
   });
 
-  // Lightbox
-  var shots = Array.prototype.slice.call(document.querySelectorAll('.shot[data-full]'));
-  if (shots.length) {
-    var lb = document.createElement('div');
+  // Lightbox. Clicks are picked up from the whole page, so photos added later (news albums) work too.
+  // Previous/next stay inside the same album when the photo is in one.
+  var lb = null, img, cap, idx = 0, last = null, group = [];
+  var build = function () {
+    lb = document.createElement('div');
     lb.className = 'lightbox'; lb.hidden = true;
     lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Photo viewer');
     lb.innerHTML =
@@ -63,19 +64,7 @@
       '<figure><img alt=""><figcaption></figcaption></figure>' +
       '<button class="lb-btn lb-next" type="button" aria-label="Next photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>';
     document.body.appendChild(lb);
-    var img = lb.querySelector('img'), cap = lb.querySelector('figcaption'), idx = 0, last = null;
-    var visible = function () { return shots.filter(function (s) { return !s.closest('[hidden]'); }); };
-    var show = function (i) {
-      var list = visible(); if (!list.length) return;
-      idx = (i + list.length) % list.length;
-      var s = list[idx];
-      img.src = s.dataset.full; img.alt = s.dataset.title || '';
-      cap.textContent = s.dataset.title || '';
-      if (s.dataset.sci) { var it = document.createElement('i'); it.textContent = s.dataset.sci; cap.appendChild(it); }
-    };
-    var open = function (s) { last = s; lb.hidden = false; document.body.style.overflow = 'hidden'; show(visible().indexOf(s)); lb.querySelector('.lb-close').focus(); };
-    var close = function () { lb.hidden = true; document.body.style.overflow = ''; img.src = ''; if (last) last.focus(); };
-    shots.forEach(function (s) { s.addEventListener('click', function () { open(s); }); });
+    img = lb.querySelector('img'); cap = lb.querySelector('figcaption');
     lb.querySelector('.lb-close').addEventListener('click', close);
     lb.querySelector('.lb-prev').addEventListener('click', function () { show(idx - 1); });
     lb.querySelector('.lb-next').addEventListener('click', function () { show(idx + 1); });
@@ -85,5 +74,35 @@
       if (e.key === 'ArrowLeft') show(idx - 1);
       if (e.key === 'ArrowRight') show(idx + 1);
     });
+  };
+  var show = function (i) {
+    if (!group.length) return;
+    idx = (i + group.length) % group.length;
+    var s = group[idx];
+    img.src = s.dataset.full; img.alt = s.dataset.title || '';
+    cap.textContent = s.dataset.title || '';
+    if (s.dataset.sci) { var it = document.createElement('i'); it.textContent = s.dataset.sci; cap.appendChild(it); }
+  };
+  var open = function (s) {
+    if (!lb) build();
+    var scope = s.closest('.album') || document;
+    group = Array.prototype.slice.call(scope.querySelectorAll('.shot[data-full]')).filter(function (x) { return !x.closest('[hidden]'); });
+    last = s; lb.hidden = false; document.body.style.overflow = 'hidden'; show(group.indexOf(s)); lb.querySelector('.lb-close').focus();
+  };
+  function close() { lb.hidden = true; document.body.style.overflow = ''; img.src = ''; if (last) last.focus(); }
+  document.addEventListener('click', function (e) {
+    var s = e.target.closest && e.target.closest('.shot[data-full]');
+    if (s) open(s);
+  });
+
+  // Pages that don't have the News link in their menu yet get it here.
+  if (nav && !nav.querySelector('a[href$="news.html"]')) {
+    var fn = nav.querySelector('a[href$="field-notes.html"]');
+    if (fn) {
+      var n = document.createElement('a');
+      n.href = fn.getAttribute('href').replace('field-notes.html', 'news.html');
+      n.textContent = 'News';
+      fn.after(n);
+    }
   }
 })();
