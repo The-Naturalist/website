@@ -1,5 +1,5 @@
-// Booking forms (book.html, contact.html). book.html saves to Firestore for the owner,
-// or hands the request to WhatsApp until Firebase is configured. The contact page form
+// Booking forms (book.html, contact.html). book.html hands the request to WhatsApp
+// (or saves it to Firestore for the owner when SAVE_BOOKINGS is on). The contact page form
 // (data-send="email") emails the request straight to the business through Web3Forms.
 import { TOURS, isConfigured } from "./firebase-config.js";
 
@@ -14,6 +14,9 @@ var EMAIL = "thenaturalist.lk@gmail.com";
 // Web3Forms access key for EMAIL (safe to publish; it can only send to that inbox).
 var W3F_KEY = "fc351e91-b0ce-4233-acfa-88f6678c25bc";
 var byEmail = form.dataset.send === "email";
+// book.html hands requests to WhatsApp (owner's choice). Set to true to save them to Firestore
+// for owner.html instead, once Firebase is configured.
+var SAVE_BOOKINGS = false;
 
 var pad = function (n) { return String(n).padStart(2, "0"); };
 var ymd = function (d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
@@ -147,7 +150,7 @@ form.addEventListener("submit", async function (e) {
     showDone(b, "email");
     return;
   }
-  if (!isConfigured) {
+  if (!isConfigured || !SAVE_BOOKINGS) {
     var url = waText(b);
     var w = window.open(url, "_blank");
     if (w) w.opener = null; else location.href = url;

@@ -2,12 +2,12 @@
 // Paste the values from Firebase console > Project settings > Your apps > Web app.
 // These values are safe to publish: access is controlled by firestore.rules.
 export const firebaseConfig = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyB3tGOz4J4sEIRp7ewceBLh5suM9PWFiGI",
+  authDomain: "the-naturalist-6052a.firebaseapp.com",
+  projectId: "the-naturalist-6052a",
+  storageBucket: "the-naturalist-6052a.firebasestorage.app",
+  messagingSenderId: "183435860135",
+  appId: "1:183435860135:web:e2fd7d6699e9fe2f39e382"
 };
 
 // Google accounts allowed into owner.html. Keep in sync with firestore.rules.
