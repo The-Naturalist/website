@@ -431,3 +431,17 @@ footer a:hover{color:var(--on-moss)}
 .fn-drop-msg small{font-family:var(--body);font-weight:400;color:var(--muted);font-size:.9rem}
 .fn-change{align-self:flex-start;min-height:40px;font-size:.9rem}
 .fn-actions .btn{min-height:46px;font-size:.98rem}
+
+/* Language switcher (EN / 中文) and Chinese pages */
+.lang-switch{display:flex;align-items:center;gap:2px;font-family:var(--display);font-size:.9rem;color:var(--on-moss-muted)}
+.lang-switch a{color:var(--on-moss-muted);text-decoration:none;padding:8px 6px;border-radius:var(--radius);font-weight:500}
+.lang-switch a:hover{color:var(--on-moss)}
+.lang-switch a[aria-current]{color:var(--on-moss);font-weight:700}
+.lang-switch span{opacity:.5}
+@media (max-width:980px){.top .wrap{column-gap:8px}.lang-switch{margin-left:auto}.lang-switch a{padding:8px 4px}.top .menu-btn{margin-left:0;order:2}}
+:lang(zh){--display:"Bricolage Grotesque","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Source Han Sans SC",system-ui,sans-serif;--body:"Source Serif 4","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif}
+html:lang(zh) body{line-height:1.8}
+html:lang(zh) h1,html:lang(zh) h2,html:lang(zh) h3{letter-spacing:0;line-height:1.25}
+html:lang(zh) em{font-style:normal}
+html:lang(zh) .tag{letter-spacing:.04em}
+html:lang(zh) .lead-cap p:first-child::first-letter{float:none;font-size:inherit;padding:0;font-weight:inherit;color:inherit;font-family:inherit}

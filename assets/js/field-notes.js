@@ -1,6 +1,10 @@
 // Field Notes page: shows notes the owner published from owner.html, newest first,
 // above the notes written into this page. Does nothing until Firebase is set up.
 import { firebaseConfig, isConfigured, TOURS } from "./firebase-config.js";
+// Chinese pages (zh/) set <html lang="zh-CN">; L(en, zh) picks the right words.
+var ZH = /^zh/i.test(document.documentElement.lang || "");
+function L(en, zh) { return ZH ? zh : en; }
+var ZH_TOURS = { wildlife: "野生动物", herping: "两栖爬行动物", birding: "观鸟", culture: "文化", heritage: "历史遗产", custom: "定制旅程", workshop: "自然课堂" };
 
 var TOUR_PAGES = { custom: "tours/customised-tours.html", workshop: "workshops.html" };
 var box = document.getElementById("posted");
@@ -40,7 +44,7 @@ function render(n) {
     img.src = n.image; img.alt = n.imageAlt || ""; img.decoding = "async";
     fr.appendChild(img); art.appendChild(fr);
   }
-  art.appendChild(el("span", "eyebrow tag", "Field note" + (n.category ? " · " + n.category : "")));
+  art.appendChild(el("span", "eyebrow tag", L("Field note", "野外笔记") + (n.category ? " · " + n.category : "")));
   var h = el("h2", null, n.title); h.id = hId; art.appendChild(h);
   var prose = el("div", "prose");
   (n.body || "").split(/\n\s*\n/).forEach(function (para) {
@@ -52,23 +56,23 @@ function render(n) {
   row.appendChild(art);
 
   var aside = el("dl", "aside");
-  if (n.topic) aside.appendChild(fact("Topic", n.topic));
-  if (n.author) aside.appendChild(fact("Written by", n.author));
+  if (n.topic) aside.appendChild(fact(L("Topic", "主题"), n.topic));
+  if (n.author) aside.appendChild(fact(L("Written by", "作者"), n.author));
   var t = n.publishedAt || n.createdAt;
-  if (t && t.toDate) aside.appendChild(fact("Posted", t.toDate().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })));
+  if (t && t.toDate) aside.appendChild(fact(L("Posted", "发布日期"), t.toDate().toLocaleDateString(ZH ? "zh-CN" : "en-GB", { day: "numeric", month: "long", year: "numeric" })));
   if (n.tags && n.tags.length) {
     var pills = el("dd", "pills");
     n.tags.forEach(function (tag) { pills.appendChild(el("span", null, tag)); });
-    aside.appendChild(fact("Tags", pills));
+    aside.appendChild(fact(L("Tags", "标签"), pills));
   }
   var see = el("dd"), tour = TOURS.find(function (x) { return x.id === n.tour; });
   if (tour) {
-    var a = el("a", null, tour.label + (tour.id === "custom" || tour.id === "workshop" ? "s" : " tour"));
+    var a = el("a", null, ZH ? ZH_TOURS[tour.id] || tour.label : tour.label + (tour.id === "custom" || tour.id === "workshop" ? "s" : " tour"));
     a.href = TOUR_PAGES[tour.id] || "tours/" + tour.id + ".html";
     see.appendChild(a); see.appendChild(document.createTextNode(" · "));
   }
-  var g = el("a", null, "Gallery"); g.href = "gallery.html"; see.appendChild(g);
-  aside.appendChild(fact("See it on", see));
+  var g = el("a", null, L("Gallery", "图库")); g.href = "gallery.html"; see.appendChild(g);
+  aside.appendChild(fact(L("See it on", "相关内容"), see));
   row.appendChild(aside);
 
   wrap.appendChild(row);

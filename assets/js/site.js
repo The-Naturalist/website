@@ -1,4 +1,7 @@
 (function () {
+  // Chinese pages (zh/) set <html lang="zh-CN">; L(en, zh) picks the right words.
+  var ZH = /^zh/i.test(document.documentElement.lang || '');
+  var L = function (en, zh) { return ZH ? zh : en; };
   // Header shadow on scroll
   var header = document.getElementById('top');
   if (header) {
@@ -13,7 +16,7 @@
     var setOpen = function (open) {
       nav.classList.toggle('open', open);
       btn.setAttribute('aria-expanded', open);
-      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      btn.setAttribute('aria-label', open ? L('Close menu', '关闭菜单') : L('Open menu', '打开菜单'));
     };
     btn.addEventListener('click', function () { setOpen(!nav.classList.contains('open')); });
     nav.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
@@ -30,10 +33,10 @@
   document.querySelectorAll('[data-copy]').forEach(function (b) {
     b.addEventListener('click', function () {
       var el = document.getElementById(b.dataset.copy), text = el.textContent.trim();
-      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1600); };
+      var done = function () { b.textContent = L('Copied', '已复制'); setTimeout(function () { b.textContent = L('Copy', '复制'); }, 1600); };
       var select = function () {
         var r = document.createRange(); r.selectNodeContents(el);
-        var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected';
+        var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = L('Selected', '已选中');
       };
       try { navigator.clipboard.writeText(text).then(done, select); } catch (err) { select(); }
     });
@@ -57,12 +60,12 @@
   var build = function () {
     lb = document.createElement('div');
     lb.className = 'lightbox'; lb.hidden = true;
-    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Photo viewer');
+    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', L('Photo viewer', '照片查看器'));
     lb.innerHTML =
-      '<button class="lb-btn lb-close" type="button" aria-label="Close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
-      '<button class="lb-btn lb-prev" type="button" aria-label="Previous photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>' +
+      '<button class="lb-btn lb-close" type="button" aria-label="' + L('Close', '关闭') + '"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
+      '<button class="lb-btn lb-prev" type="button" aria-label="' + L('Previous photo', '上一张') + '"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>' +
       '<figure><img alt=""><figcaption></figcaption></figure>' +
-      '<button class="lb-btn lb-next" type="button" aria-label="Next photo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>';
+      '<button class="lb-btn lb-next" type="button" aria-label="' + L('Next photo', '下一张') + '"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>';
     document.body.appendChild(lb);
     img = lb.querySelector('img'); cap = lb.querySelector('figcaption');
     lb.querySelector('.lb-close').addEventListener('click', close);
@@ -101,7 +104,7 @@
     if (fn) {
       var n = document.createElement('a');
       n.href = fn.getAttribute('href').replace('field-notes.html', 'news.html');
-      n.textContent = 'News';
+      n.textContent = L('News', '新闻');
       fn.after(n);
     }
   }

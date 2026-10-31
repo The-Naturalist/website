@@ -1,8 +1,12 @@
 // News & Events page: lists every post as a card, opens one post at a time (news.html#post-id),
 // and adds posts published from owner.html above the ones written into the page.
 import { firebaseConfig, isConfigured, TOURS } from "./firebase-config.js";
+// Chinese pages (zh/) set <html lang="zh-CN">; L(en, zh) picks the right words.
+var ZH = /^zh/i.test(document.documentElement.lang || "");
+function L(en, zh) { return ZH ? zh : en; }
+var ZH_TOURS = { wildlife: "野生动物", herping: "两栖爬行动物", birding: "观鸟", culture: "文化", heritage: "历史遗产", custom: "定制旅程", workshop: "自然课堂" };
 
-var TYPES = { event: "Event", special: "Tour special", news: "News" };
+var TYPES = ZH ? { event: "活动", special: "旅程特惠", news: "新闻" } : { event: "Event", special: "Tour special", news: "News" };
 var TOUR_PAGES = { custom: "tours/customised-tours.html", workshop: "workshops.html" };
 var list = document.getElementById("nwList"), grid = document.getElementById("nwGrid"), box = document.getElementById("nwPosts");
 var filter = "all", baseTitle = document.title, F = null, db = null;
@@ -33,14 +37,14 @@ function cards() {
     var cover = p.querySelector("article > .frame img");
     var fr = el("div", "frame " + (p.dataset.type === "special" ? "b" : p.dataset.type === "news" ? "d" : "c"));
     if (cover) { var i = el("img"); i.src = cover.getAttribute("src"); i.alt = ""; i.loading = "lazy"; i.decoding = "async"; fr.appendChild(i); }
-    else fr.appendChild(el("div", "ph tag", TYPES[p.dataset.type] || "News"));
+    else fr.appendChild(el("div", "ph tag", TYPES[p.dataset.type] || TYPES.news));
     a.appendChild(fr);
     var body = el("div", "body");
     var eb = p.querySelector(".eyebrow"), h = p.querySelector("h2"), first = p.querySelector(".prose p");
-    body.appendChild(el("span", "tag", eb ? eb.textContent : TYPES[p.dataset.type] || "News"));
+    body.appendChild(el("span", "tag", eb ? eb.textContent : TYPES[p.dataset.type] || TYPES.news));
     body.appendChild(el("h3", null, h ? h.textContent : ""));
     if (first) body.appendChild(el("p", null, first.textContent));
-    body.appendChild(el("span", "more", "Read more →"));
+    body.appendChild(el("span", "more", L("Read more →", "阅读全文 →")));
     a.appendChild(body);
     grid.appendChild(a);
   });
@@ -52,7 +56,7 @@ function route(scroll) {
   posts().forEach(function (p) {
     var on = p.id === id; p.hidden = !on; if (on) open = p;
     if (!p.querySelector(".nw-back")) {
-      var w = el("div", "wrap nw-back"), b = el("a", "btn btn-line", "← All news & events"); b.href = "#";
+      var w = el("div", "wrap nw-back"), b = el("a", "btn btn-line", L("← All news & events", "← 全部新闻与活动")); b.href = "#";
       w.appendChild(b); p.insertBefore(w, p.firstChild);
     }
   });
@@ -83,11 +87,12 @@ function isImg(s) { return typeof s === "string" && /^data:image\/(jpeg|png|webp
 function longDate(s) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(s || "")) return "";
   var p = s.split("-");
-  return new Date(+p[0], p[1] - 1, +p[2]).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  return new Date(+p[0], p[1] - 1, +p[2]).toLocaleDateString(ZH ? "zh-CN" : "en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
 function whenText(n) {
   var a = longDate(n.date), b = longDate(n.dateEnd);
   if (!a || !b || b === a) return a;
+  if (ZH) return a + " 至 " + b;
   if (n.date.slice(0, 7) === n.dateEnd.slice(0, 7)) return a.split(" ")[0] + " to " + b;
   return a + " to " + b;
 }
@@ -115,19 +120,19 @@ function render(n) {
   row.appendChild(art);
 
   var aside = el("dl", "aside");
-  aside.appendChild(fact("What", TYPES[sec.dataset.type]));
-  if (when) aside.appendChild(fact("When", when));
-  if (n.place) aside.appendChild(fact("Where", n.place));
+  aside.appendChild(fact(L("What", "类型"), TYPES[sec.dataset.type]));
+  if (when) aside.appendChild(fact(L("When", "时间"), when));
+  if (n.place) aside.appendChild(fact(L("Where", "地点"), n.place));
   var tour = TOURS.find(function (x) { return x.id === n.tour; });
   if (tour) {
-    var dd = el("dd"), a = el("a", null, tour.label + (tour.id === "custom" || tour.id === "workshop" ? "s" : " tour"));
+    var dd = el("dd"), a = el("a", null, ZH ? ZH_TOURS[tour.id] || tour.label : tour.label + (tour.id === "custom" || tour.id === "workshop" ? "s" : " tour"));
     a.href = TOUR_PAGES[tour.id] || "tours/" + tour.id + ".html"; dd.appendChild(a);
-    aside.appendChild(fact("See it on", dd));
+    aside.appendChild(fact(L("See it on", "相关内容"), dd));
   }
   if (sec.dataset.type === "special") {
-    var ask = el("dd"), w = el("a", "btn btn-accent", "Ask on WhatsApp");
+    var ask = el("dd"), w = el("a", "btn btn-accent", L("Ask on WhatsApp", "WhatsApp 咨询"));
     w.href = "https://wa.me/94712727755?text=" + encodeURIComponent("Hi! I saw “" + n.title + "” on your website and would like to know more.");
-    ask.appendChild(w); aside.appendChild(fact("Interested?", ask));
+    ask.appendChild(w); aside.appendChild(fact(L("Interested?", "感兴趣？"), ask));
   }
   row.appendChild(aside);
   sec.appendChild(row);
@@ -139,7 +144,7 @@ async function photos(sec) {
   var album = sec.querySelector(".album");
   if (!album || album.dataset.loaded) return;
   album.dataset.loaded = "1";
-  album.appendChild(el("p", "nw-loading tag", "Loading photos…"));
+  album.appendChild(el("p", "nw-loading tag", L("Loading photos…", "照片加载中…")));
   try {
     var snap = await F.getDocs(F.query(F.collection(db, "news", sec.dataset.remote, "photos"), F.orderBy("order")));
     album.innerHTML = "";
