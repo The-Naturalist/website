@@ -195,12 +195,12 @@ function showDone(b, how) {
   link.href = waText(b);
   if (how === "email") {
     document.getElementById("bkDoneLede").textContent = ZH
-      ? "您的预订申请（" + b.tourShown + "，" + pretty(b.date) + " 出发）已发送。Priyanwada 会回复到 " + b.email + "，通常在 24 小时内。"
+      ? "您的预订申请（" + b.tourShown + "，" + pretty(b.date) + " 出发）已发送。美语会回复到 " + b.email + "，通常在 24 小时内。"
       : "Your request for " + b.tourLabel + " starting " + pretty(b.date) + " has been sent. Priyanwada will reply to " + b.email + ", usually within 24 hours.";
     link.hidden = true;
   } else if (how === "whatsapp") {
     document.getElementById("bkDoneLede").textContent = ZH
-      ? "WhatsApp 应该已经打开，里面是您的预订申请（" + b.tourShown + "，" + pretty(b.date) + " 出发）。请在 WhatsApp 中点击发送，Priyanwada 会回复确认。"
+      ? "WhatsApp 应该已经打开，里面是您的预订申请（" + b.tourShown + "，" + pretty(b.date) + " 出发）。请在 WhatsApp 中点击发送，美语会回复确认。"
       : "WhatsApp should now be open with your request for " + b.tourLabel + " starting " + pretty(b.date) + ". Press send there and Priyanwada will reply to confirm.";
     link.textContent = L("Open WhatsApp again", "再次打开 WhatsApp");
   }

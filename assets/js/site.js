@@ -98,6 +98,46 @@
     if (s) open(s);
   });
 
+  // Floating contact buttons: WhatsApp and WeChat, each showing its QR card on hover (tap on phones for WeChat).
+  // To set up WeChat: upload the QR code as assets/img/wechat-qr.jpg and put the WeChat ID below.
+  var WECHAT_ID = '';
+  var wa = document.querySelector('.wa-float');
+  var me = document.querySelector('script[src$="site.js"]');
+  if (wa && me && !document.querySelector('.fc-stack')) {
+    var img = me.getAttribute('src').replace(/js\/site\.js$/, 'img/');
+    var stack = document.createElement('div'); stack.className = 'fc-stack';
+    var card = function (title, qr, alt, lines) {
+      var c = document.createElement('div'); c.className = 'fc-card'; c.setAttribute('role', 'tooltip');
+      var h = document.createElement('p'); h.className = 'fc-title'; h.textContent = title; c.appendChild(h);
+      var q = document.createElement('img'); q.src = img + qr; q.alt = alt; q.width = 140; q.height = 140; q.loading = 'lazy';
+      q.addEventListener('error', function () { q.replaceWith(Object.assign(document.createElement('p'), { className: 'fc-soon', textContent: L('QR code coming soon', '二维码即将上线') })); });
+      c.appendChild(q);
+      lines.forEach(function (t) { if (t) { var e = document.createElement('p'); e.className = 'fc-note'; e.textContent = t; c.appendChild(e); } });
+      return c;
+    };
+    // WeChat
+    var wc = document.createElement('div'); wc.className = 'fc fc-wechat';
+    var wb = document.createElement('button'); wb.type = 'button'; wb.className = 'fc-btn wc-float';
+    wb.setAttribute('aria-label', L('WeChat: show QR code', '微信：显示二维码')); wb.setAttribute('aria-expanded', 'false');
+    wb.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 4C5.4 4 2 6.7 2 10.1c0 1.9 1.1 3.6 2.8 4.7L4.2 17l2.6-1.3c.8.2 1.7.4 2.7.4h.4"/><path d="M15.5 9c-3.6 0-6.5 2.4-6.5 5.3s2.9 5.3 6.5 5.3c.7 0 1.4-.1 2-.3l2.2 1.1-.5-2c1.7-1 2.8-2.5 2.8-4.1C22 11.4 19.1 9 15.5 9Z"/><circle cx="7" cy="9" r=".6" fill="currentColor"/><circle cx="11.5" cy="9" r=".6" fill="currentColor"/><circle cx="13.5" cy="13.8" r=".5" fill="currentColor"/><circle cx="17.5" cy="13.8" r=".5" fill="currentColor"/></svg>';
+    wc.appendChild(wb);
+    wc.appendChild(card(L('WeChat', '微信 WeChat'), 'wechat-qr.jpg', L('WeChat QR code for The Naturalist', 'The Naturalist 微信二维码'),
+      [L('Scan in WeChat to add us', '用微信扫一扫添加我们'), WECHAT_ID && (L('WeChat ID: ', '微信号：') + WECHAT_ID)]));
+    wb.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = !wc.classList.contains('open'); wc.classList.toggle('open', open); wb.setAttribute('aria-expanded', open);
+    });
+    document.addEventListener('click', function (e) { if (!wc.contains(e.target)) { wc.classList.remove('open'); wb.setAttribute('aria-expanded', 'false'); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { wc.classList.remove('open'); wb.setAttribute('aria-expanded', 'false'); } });
+    // WhatsApp: the button still opens the chat; hovering shows the QR for desktop visitors.
+    var wf = document.createElement('div'); wf.className = 'fc fc-whatsapp';
+    wa.parentNode.insertBefore(stack, wa);
+    wf.appendChild(wa);
+    wf.appendChild(card('WhatsApp', 'contact-01.jpg', L('WhatsApp QR code for The Naturalist', 'The Naturalist WhatsApp 二维码'),
+      [L('Scan with your phone, or tap to chat', '用手机扫码，或点击按钮直接聊天'), '+94 71 27 27 755']));
+    stack.appendChild(wc); stack.appendChild(wf);
+  }
+
   // Pages that don't have the News link in their menu yet get it here.
   if (nav && !nav.querySelector('a[href$="news.html"]')) {
     var fn = nav.querySelector('a[href$="field-notes.html"]');
