@@ -433,14 +433,12 @@ footer a:hover{color:var(--on-moss)}
 .fn-actions .btn{min-height:46px;font-size:.98rem}
 
 /* Language switcher (EN / 中文) and Chinese pages */
-.lang-switch{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:999px;background:var(--moss-2);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);font-family:var(--display);font-size:.85rem;line-height:1;flex:none}
-.lang-switch a{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:32px;padding:0 12px;border-radius:999px;color:var(--on-moss-muted);text-decoration:none;font-weight:600;transition:background .15s,color .15s}
-.lang-switch a:hover{color:var(--on-moss);background:rgba(255,255,255,.06)}
-.lang-switch a[aria-current]{background:var(--accent);color:var(--on-accent);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.25)}
-.lang-switch span{display:none}
-@media (max-width:980px){.top .wrap{column-gap:8px}.lang-switch{margin-left:auto}.top .menu-btn{margin-left:0;order:2}}
-@media (max-width:480px){.lang-switch{font-size:.8rem}.lang-switch a{min-width:34px;min-height:30px;padding:0 8px}}
-@media (max-width:374px){.brand img{height:30px}.top .wrap{column-gap:4px}.lang-switch a{min-width:30px;padding:0 6px}}
+.lang-switch{display:flex;align-items:center;gap:2px;font-family:var(--display);font-size:.9rem;color:var(--on-moss-muted)}
+.lang-switch a{color:var(--on-moss-muted);text-decoration:none;padding:8px 6px;border-radius:var(--radius);font-weight:500}
+.lang-switch a:hover{color:var(--on-moss)}
+.lang-switch a[aria-current]{color:var(--on-moss);font-weight:700}
+.lang-switch span{opacity:.5}
+@media (max-width:980px){.top .wrap{column-gap:8px}.lang-switch{margin-left:auto}.lang-switch a{padding:8px 4px}.top .menu-btn{margin-left:0;order:2}}
 :lang(zh){--display:"Bricolage Grotesque","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Source Han Sans SC",system-ui,sans-serif;--body:"Source Serif 4","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif}
 html:lang(zh) body{line-height:1.8}
 html:lang(zh) h1,html:lang(zh) h2,html:lang(zh) h3{letter-spacing:0;line-height:1.25}
