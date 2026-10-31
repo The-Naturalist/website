@@ -29,9 +29,9 @@
 <button aria-controls="nav" aria-expanded="false" aria-label="打开菜单" class="menu-btn" id="menuBtn" type="button">
 <svg aria-hidden="true" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
 </button>
-<nav aria-label="主导航" class="nav" id="nav"><a href="about-us.html">关于我们</a><a href="tours.html">旅程</a><a href="gallery.html">图库</a><a href="field-notes.html">野外笔记</a><a href="workshops.html">自然课堂</a><a href="contact.html">联系我们</a><a class="btn btn-accent" href="https://wa.me/94712727755">规划旅程</a></nav>
+<nav aria-label="主导航" class="nav" id="nav"><a href="about-us.html">关于我们</a><a href="tours.html">旅程</a><a href="gallery.html">图库</a><a href="field-notes.html">野外笔记</a><a href="workshops.html">自然课堂</a><a href="contact.html">联系我们</a><a class="btn btn-accent" data-wechat="" href="#wechat">规划旅程</a></nav>
     <div class="lang-switch" role="group" aria-label="语言"><a href="../book.html" lang="en" hreflang="en">EN</a><span aria-hidden="true">/</span><a href="book.html" lang="zh-CN" hreflang="zh-CN" aria-current="true">中文</a></div>
-<a class="btn btn-accent" href="https://wa.me/94712727755">规划旅程</a>
+<a class="btn btn-accent" data-wechat="" href="#wechat">规划旅程</a>
 </div>
 </header>
 <main id="main">
@@ -46,7 +46,7 @@
 </section>
 <section aria-labelledby="bk-h" class="block tight">
 <div class="wrap book">
-<form class="bk-form" id="bookForm" novalidate="">
+<form class="bk-form" data-send="email" id="bookForm" novalidate="">
 <h2 class="sr-only" id="bk-h">预订信息</h2>
 <fieldset>
 <legend class="tag">您的旅程</legend>
@@ -78,7 +78,7 @@
 <input autocomplete="email" id="bkEmail" maxlength="200" name="email" required="" type="email"/>
 </div>
 <div class="field">
-<label for="bkPhone">WhatsApp 或电话 <span class="opt">选填</span></label>
+<label for="bkPhone">微信号或电话 <span class="opt">选填</span></label>
 <input autocomplete="tel" id="bkPhone" maxlength="40" name="phone" type="tel"/>
 </div>
 <div class="field full">
@@ -98,13 +98,13 @@
 <div class="bk-done" hidden="" id="bkDone" tabindex="-1">
 <span class="tag">已收到申请</span>
 <h2>谢谢您，<span id="bkDoneName"></span></h2>
-<p class="lede" id="bkDoneLede">您的预订申请（<strong id="bkDoneTour"></strong>，<strong id="bkDoneDate"></strong> 出发）已发送。我们会通过电子邮件<span id="bkDoneWa">或 WhatsApp</span> 回复确认。</p>
-<div class="actions"><a class="btn btn-accent" href="https://wa.me/94712727755" id="bkDoneWaLink">也可以通过 WhatsApp 联系我们</a><a class="btn btn-line" href="tours.html">返回旅程</a></div>
+<p class="lede" id="bkDoneLede">您的预订申请（<strong id="bkDoneTour"></strong>，<strong id="bkDoneDate"></strong> 出发）已发送。我们会通过电子邮件<span id="bkDoneWa">或微信</span> 回复确认。</p>
+<div class="actions"><a class="btn btn-accent" href="https://wa.me/94712727755" id="bkDoneWaLink">也可以通过微信联系我们</a><a class="btn btn-line" href="tours.html">返回旅程</a></div>
 </div>
 <aside class="bk-side">
 <span class="tag">想直接聊聊？</span>
-<p>咨询日期、价格或定制路线，WhatsApp 是最快的方式。</p>
-<a class="btn btn-line" href="https://wa.me/94712727755">WhatsApp 咨询</a>
+<p>咨询日期、价格或定制路线，微信是最快的方式。</p>
+<a class="btn btn-line" data-wechat="" href="#wechat">微信咨询</a>
 </aside>
 </div>
 </section>
@@ -118,11 +118,11 @@
 </div>
 <div><h4>浏览</h4><ul><li><a href="about-us.html">关于我们</a></li><li><a href="tours.html">旅程</a></li><li><a href="gallery.html">图库</a></li><li><a href="field-notes.html">野外笔记</a></li><li><a href="workshops.html">自然课堂</a></li><li><a href="book.html">预订旅程</a></li><li><a href="contact.html">联系我们</a></li></ul></div>
 <div><h4>旅程</h4><ul><li><a href="tours/wildlife.html">野生动物</a></li><li><a href="tours/herping.html">两栖爬行动物</a></li><li><a href="tours/birding.html">观鸟</a></li><li><a href="tours/culture.html">文化</a></li><li><a href="tours/heritage.html">历史遗产</a></li><li><a href="tours/customised-tours.html">定制旅程</a></li></ul></div>
-<div><h4>联系我们</h4><ul><li>手机 / WhatsApp：+94 71 27 27 755</li><li style="overflow-wrap:anywhere">电子邮箱：thenaturalist.lk@gmail.com</li><li><a href="https://wa.me/94712727755">WhatsApp</a></li></ul></div>
+<div><h4>联系我们</h4><ul><li>手机：+94 71 27 27 755</li><li style="overflow-wrap:anywhere">电子邮箱：thenaturalist.lk@gmail.com</li><li><a data-wechat="" href="#wechat">微信 WeChat</a></li></ul></div>
 <div class="legal"><span>© 2026 The Naturalist. 保留所有权利。</span><a href="#top">返回顶部 ↑</a></div>
 </div>
 </footer>
-<a aria-label="WhatsApp 咨询" class="wa-float" href="https://wa.me/94712727755"><svg aria-hidden="true" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.2-4.4A9 9 0 1 1 21 12Z"></path></svg></a>
+<a aria-label="微信咨询" class="wa-float" href="https://wa.me/94712727755"><svg aria-hidden="true" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.2-4.4A9 9 0 1 1 21 12Z"></path></svg></a>
 <script defer="" src="../assets/js/site.js"></script>
 <script src="../assets/js/booking.js" type="module"></script>
 </body>

@@ -127,15 +127,28 @@
       e.stopPropagation();
       var open = !wc.classList.contains('open'); wc.classList.toggle('open', open); wb.setAttribute('aria-expanded', open);
     });
+    // Links marked data-wechat (Chinese pages) open the WeChat card.
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest && e.target.closest('[data-wechat]');
+      if (!t) return;
+      e.preventDefault(); e.stopPropagation();
+      wc.classList.add('open'); wb.setAttribute('aria-expanded', 'true'); wb.focus({ preventScroll: true });
+    });
     document.addEventListener('click', function (e) { if (!wc.contains(e.target)) { wc.classList.remove('open'); wb.setAttribute('aria-expanded', 'false'); } });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { wc.classList.remove('open'); wb.setAttribute('aria-expanded', 'false'); } });
     // WhatsApp: the button still opens the chat; hovering shows the QR for desktop visitors.
-    var wf = document.createElement('div'); wf.className = 'fc fc-whatsapp';
+    // Chinese pages offer WeChat only; English pages offer both.
     wa.parentNode.insertBefore(stack, wa);
-    wf.appendChild(wa);
-    wf.appendChild(card('WhatsApp', 'contact-01.jpg', L('WhatsApp QR code for The Naturalist', 'The Naturalist WhatsApp 二维码'),
-      [L('Scan with your phone, or tap to chat', '用手机扫码，或点击按钮直接聊天'), '+94 71 27 27 755']));
-    stack.appendChild(wc); stack.appendChild(wf);
+    if (ZH) {
+      wa.remove();
+      stack.appendChild(wc);
+    } else {
+      var wf = document.createElement('div'); wf.className = 'fc fc-whatsapp';
+      wf.appendChild(wa);
+      wf.appendChild(card('WhatsApp', 'contact-01.jpg', 'WhatsApp QR code for The Naturalist',
+        ['Scan with your phone, or tap to chat', '+94 71 27 27 755']));
+      stack.appendChild(wc); stack.appendChild(wf);
+    }
   }
 
   // Pages that don't have the News link in their menu yet get it here.
